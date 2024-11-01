@@ -1,74 +1,187 @@
-document.addEventListener('DOMContentLoaded', function() {
-    // Load default page (dashboard)
-    loadPage('dashboard');
+// Data storage
+let karyawanData = [];
+let absensiData = [];
+let laporanData = [];
 
-    // Add click event listeners to all sidebar links
-    document.querySelectorAll('.sidebar-menu a[data-page]').forEach(link => {
-        link.addEventListener('click', function(e) {
-            e.preventDefault();
-            
-            // Remove active class from all links
-            document.querySelectorAll('.sidebar-menu a').forEach(a => {
-                a.classList.remove('active');
-            });
-            
-            // Add active class to clicked link
-            this.classList.add('active');
-            
-            // Load the requested page
-            loadPage(this.dataset.page);
-        });
+// Show active section
+function showSection(sectionId) {
+    document.querySelectorAll('.content-section').forEach(section => {
+        section.classList.remove('active');
     });
-});
+    document.getElementById(sectionId).classList.add('active');
+}
 
-function loadPage(pageName) {
-    const mainContent = document.getElementById('main-content');
+// Modal handling
+function setupModal(modalId, btnId, formId, dataArray, tableId, createRowFunction) {
+    const modal = document.getElementById(modalId);
+    const btn = document.getElementById(btnId);
+    const span = modal.querySelector('.close');
+    const form = document.getElementById(formId);
+
+    btn.onclick = () => modal.style.display = "block";
+    span.onclick = () => modal.style.display = "none";
+    window.onclick = (event) => {
+        if (event.target == modal) modal.style.display = "none";
+    }
+
+    form.onsubmit = (e) => {
+        e.preventDefault();
+        const formData = new FormData(form);
+        const data = Object.fromEntries(formData.entries());
+        dataArray.push(data);
+        updateTable(tableId, dataArray, createRowFunction);
+        modal.style.display = "none";
+        form.reset();
+    }
+}
+
+// Table updates
+function updateTable(tableId, data, createRowFunction) {
+    const tbody = document.querySelector(`#${tableId} tbody`);
+    tbody.innerHTML = '';
+    data.forEach((item, index) => {
+        tbody.appendChild(createRowFunction(item, index));
+    });
+}
+
+// Create table rows
+function createKaryawanRow(data, index) {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+        <td>${index + 1}</td>
+        <td>${data.id}</td>
+        <td>${data.nama}</td>
+        <td>${data.email}</td>
+        <td>${data.jabatan}</td>
+        <td>${data.divisi}</td>
+        <td>
+            <a href="#" onclick="editKaryawan(${index})"><i class="fas fa-edit"></i></a>
+            <a href="#" onclick="deleteKaryawan(${index})"><i class="fas fa-trash"></i></a>
+        </td>
+    `;
+    return tr;
+}
+
+// Settings functions
+function updateProfile() {
+    const fullName = document.getElementById('fullName').value;
+    const email = document.getElementById('email').value;
+    const phone = document.getElementById('phone').value;
+
+    if (!fullName || !email || !phone) {
+        alert('Mohon lengkapi semua field');
+        return;
+    }
+
+    // Simulasi update profil
+    alert('Profil berhasil diperbarui');
+}
+
+function updatePassword() {
+    const oldPassword = document.getElementById('oldPassword').value;
+    const newPassword = document.getElementById('newPassword').value;
+    const confirmPassword = document.getElementById('confirmPassword').value;
+
+    if (!oldPassword || !newPassword || !confirmPassword) {
+        alert('Mohon lengkapi semua field');
+        return;
+    }
+
+    if (newPassword !== confirmPassword) {
+        alert('Password baru dan konfirmasi password tidak cocok');
+        return;
+    }
+
+    // Simulasi update password
+    alert('Password berhasil diubah');
     
-    // Load the content for the requested page
-    fetch(`pages/${pageName}.html`)
-        .then(response => response.text())
-        .then(html => {
-            mainContent.innerHTML = html;
-            // Initialize any page-specific JavaScript
-            initPageScripts(pageName);
-        })
-        .catch(error => {
-            console.error('Error loading page:', error);
-            mainContent.innerHTML = '<div class="error">Error loading page content</div>';
-        });
+    // Reset form
+    document.getElementById('oldPassword').value = '';
+    document.getElementById('newPassword').value = '';
+    document.getElementById('confirmPassword').value = '';
 }
 
-function initPageScripts(pageName) {
-    switch(pageName) {
-        case 'karyawan':
-            initKaryawanPage();
-            break;
-        case 'absensi':
-            initAbsensiPage();
-            break;
-        // Add other page initializations as needed
+function updateNotifications() {
+    const emailNotif = document.getElementById('emailNotif').checked;
+    const loginNotif = document.getElementById('loginNotif').checked;
+    const updateNotif = document.getElementById('updateNotif').checked;
+
+    // Simulasi update notifikasi
+    alert('Pengaturan notifikasi berhasil disimpan');
+}
+
+// Logout functions
+function cancelLogout() {
+    // Kembali ke dashboard
+    showSection('dashboard');
+}
+
+function processLogout() {
+    // Tambahkan animasi fade out
+    document.body.classList.add('fade-out');
+
+    // Simulasi proses logout
+    setTimeout(() => {
+        // Hapus data sesi
+        localStorage.removeItem('userSettings');
+        localStorage.removeItem('isLoggedIn');
+        sessionStorage.clear();
+
+        // Tampilkan pesan logout
+        alert('Anda berhasil logout');
+
+        // Redirect ke halaman login
+        window.location.href = 'login.html'; // Sesuaikan dengan halaman login Anda
+    }, 500);
+}
+
+// Initialize
+document.addEventListener('DOMContentLoaded', () => {
+    setupModal('modalKaryawan', 'tambahKaryawan', 'formKaryawan', karyawanData, 'karyawan', createKaryawanRow);
+    // Similar setup for absensi and laporan
+    
+    // Delete handlers
+    window.deleteKaryawan = (index) => {
+        if (confirm('Apakah Anda yakin ingin menghapus data ini?')) {
+            karyawanData.splice(index, 1);
+            updateTable('karyawan', karyawanData, createKaryawanRow);
+        }
+    }
+    
+    // Edit handlers
+    window.editKaryawan = (index) => {
+        // Implement edit functionality
+        alert('Edit functionality to be implemented');
+    }
+
+    // Initialize settings values from localStorage if available
+    const savedSettings = localStorage.getItem('userSettings');
+    if (savedSettings) {
+        const settings = JSON.parse(savedSettings);
+        document.getElementById('fullName').value = settings.fullName || '';
+        document.getElementById('email').value = settings.email || '';
+        document.getElementById('phone').value = settings.phone || '';
+        document.getElementById('emailNotif').checked = settings.emailNotif ?? true;
+        document.getElementById('loginNotif').checked = settings.loginNotif ?? true;
+        document.getElementById('updateNotif').checked = settings.updateNotif ?? true;
+    }
+
+    // Tambahkan handler untuk link logout di sidebar
+    const logoutLink = document.querySelector('a[onclick="showSection(\'logout\')"]');
+    if (logoutLink) {
+        logoutLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            showSection('logout');
+        });
+    }
+});
+// Tambahkan fungsi untuk cek status login
+function checkLoginStatus() {
+    const isLoggedIn = localStorage.getItem('isLoggedIn');
+    if (!isLoggedIn) {
+        window.location.href = 'login.html'; // Sesuaikan dengan halaman login Anda
     }
 }
 
-function initKaryawanPage() {
-    // Initialize karyawan page specific functionality
-    const tambahBtn = document.querySelector('.btn');
-    if (tambahBtn) {
-        tambahBtn.addEventListener('click', function() {
-            alert('Tambah karyawan clicked!');
-            // Add your tambah karyawan logic here
-        });
-    }
-}
-
-function initAbsensiPage() {
-    // Initialize absensi page specific functionality
-    const datePicker = document.getElementById('attendance-date');
-    if (datePicker) {
-        datePicker.valueAsDate = new Date();
-        datePicker.addEventListener('change', function() {
-            // Add your date change logic here
-            console.log('Selected date:', this.value);
-        });
-    }
-} 
+// Panggil fungsi cek login saat halaman dimuat
+document.addEventListener('DOMContentLoaded', checkLoginStatus);
