@@ -245,6 +245,14 @@ table td {
     transition: all 0.3s ease;
 }
 
+.content-section {
+    display: none;
+}
+
+.content-section.active {
+    display: block;
+}
+
 .form-group input:focus {
     outline: none;
     border-color: #2563eb;
@@ -267,4 +275,56 @@ table td {
 .save-settings:hover {
     background-color: #1d4ed8;
     transform: translateY(-2px);
+}
+
+/* Penggajian Styling */
+.badge {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.badge.success {
+    background-color: #10B981;
+    color: white;
+}
+
+.badge.pending {
+    background-color: #F59E0B;
+    color: white;
+}
+
+.action-btn {
+    padding: 5px;
+    margin: 0 3px;
+    color: #4B5563;
+    transition: all 0.3s ease;
+}
+
+.action-btn:hover {
+    transform: scale(1.1);
+}
+
+.action-btn.edit:hover {
+    color: #2563EB;
+}
+
+.action-btn.print:hover {
+    color: #10B981;
+}
+
+.action-btn.delete:hover {
+    color: #EF4444;
+}
+
+/* Responsive Table */
+@media (max-width: 1024px) {
+    .table-container {
+        overflow-x: auto;
+    }
+    
+    table {
+        min-width: 1000px;
+    }
 }

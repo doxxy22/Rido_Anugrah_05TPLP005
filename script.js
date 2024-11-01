@@ -2,6 +2,7 @@
 let karyawanData = [];
 let absensiData = [];
 let laporanData = [];
+let gajiData = [];
 
 // Show active section
 function showSection(sectionId) {
@@ -135,9 +136,67 @@ function processLogout() {
     }, 500);
 }
 
+// Create gaji rows
+function createGajiRow(data, index) {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+        <td>${index + 1}</td>
+        <td>${data.idKaryawan}</td>
+        <td>${data.nama}</td>
+        <td>Rp ${formatNumber(data.gajiPokok)}</td>
+        <td>Rp ${formatNumber(data.tunjangan)}</td>
+        <td>Rp ${formatNumber(data.lembur)}</td>
+        <td>Rp ${formatNumber(data.potongan)}</td>
+        <td>Rp ${formatNumber(hitungTotalGaji(data))}</td>
+        <td>${data.periode}</td>
+        <td><span class="badge ${data.status.toLowerCase()}">${data.status}</span></td>
+        <td>
+            <a href="#" class="action-btn edit" onclick="editGaji(${index})"><i class="fas fa-edit"></i></a>
+            <a href="#" class="action-btn print" onclick="printSlipGaji(${index})"><i class="fas fa-print"></i></a>
+            <a href="#" class="action-btn delete" onclick="deleteGaji(${index})"><i class="fas fa-trash"></i></a>
+        </td>
+    `;
+    return tr;
+}
+
+// Format number
+function formatNumber(num) {
+    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+}
+
+// Hitung total gaji
+function hitungTotalGaji(data) {
+    return parseInt(data.gajiPokok) + 
+           parseInt(data.tunjangan) + 
+           parseInt(data.lembur) - 
+           parseInt(data.potongan);
+}
+
+// Print slip gaji
+function printSlipGaji(index) {
+    const data = gajiData[index];
+    // Implementasi print slip gaji
+    alert('Fitur print slip gaji akan segera tersedia');
+}
+
+// Edit gaji
+function editGaji(index) {
+    // Implementasi edit gaji
+    alert('Fitur edit gaji akan segera tersedia');
+}
+
+// Delete gaji
+function deleteGaji(index) {
+    if (confirm('Apakah Anda yakin ingin menghapus data gaji ini?')) {
+        gajiData.splice(index, 1);
+        updateTable('penggajian', gajiData, createGajiRow);
+    }
+}
+
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
     setupModal('modalKaryawan', 'tambahKaryawan', 'formKaryawan', karyawanData, 'karyawan', createKaryawanRow);
+    setupModal('modalGaji', 'tambahGaji', 'formGaji', gajiData, 'penggajian', createGajiRow);
     // Similar setup for absensi and laporan
     
     // Delete handlers

@@ -10,25 +10,52 @@
  
   <script>
    function showSection(sectionId) {
+            // Hide all sections first
             var sections = document.querySelectorAll('.content-section');
             sections.forEach(function(section) {
+                section.style.display = 'none';
                 section.classList.remove('active');
             });
+
+            // Remove active class from all sidebar links
             var sidebarLinks = document.querySelectorAll('.sidebar-menu a');
             sidebarLinks.forEach(function(link) {
                 link.classList.remove('active');
             });
-            document.getElementById(sectionId).classList.add('active');
-            document.querySelector(`[onclick="showSection('${sectionId}')"]`).classList.add('active');
+
+            // Show the selected section and add active class
+            var selectedSection = document.getElementById(sectionId);
+            if (selectedSection) {
+                selectedSection.style.display = 'block';
+                selectedSection.classList.add('active');
+            }
+
+            // Add active class to clicked sidebar link
+            var activeLink = document.querySelector(`[onclick="showSection('${sectionId}')"]`);
+            if (activeLink) {
+                activeLink.classList.add('active');
+            }
+
+            // Special handling for logout
+            if (sectionId === 'logout') {
+                // Add your logout logic here
+                alert('Logging out...');
+                // For example: window.location.href = 'logout.php';
+            }
         }
+
+        // When page loads, show dashboard by default
+        document.addEventListener('DOMContentLoaded', function() {
+            showSection('dashboard');
+        });
   </script>
  </head>
  <body>
   <div class="sidebar">
    <div class="sidebar-header">
-    <img alt="User profile picture" height="50" src="me.jpg"/>
+    <img alt="User profile picture" height="50" src="mee.jpg"/>
     <h3>
-     Welcome, User
+     Welcome
     </h3>
     <p>
      Admin
@@ -51,6 +78,10 @@
         <i class="fas fa-file-alt"></i>
         <span>Laporan</span>
     </a>
+    <a href="#" onclick="showSection('penggajian')">
+        <i class="fas fa-money-bill-wave"></i>
+        <span>Penggajian</span>
+    </a>
     <a href="#" onclick="showSection('pengaturan')">
         <i class="fas fa-cogs"></i>
         <span>Pengaturan</span>
@@ -67,9 +98,9 @@
      Sistem Informasi Manajemen Karyawan
     </h1>
     <div class="user-info">
-     <img alt="User profile picture" height="40" src="me.jpg" width="40"/>
+     <img alt="User profile picture" height="40" src="mee.jpg" width="40"/>
      <p>
-      User Name
+      Rido Anugrah
      </p>
     </div>
    </div>
@@ -92,7 +123,7 @@
        Absensi Hari Ini
       </h3>
       <p>
-       0
+       3
       </p>
      </div>
      <div class="card">
@@ -160,10 +191,10 @@
          001
         </td>
         <td>
-         John Doe
+         Rido Anugrah
         </td>
         <td>
-         john@example.com
+         ridoanugrah@gmail.com
         </td>
         <td>
          Manager
@@ -346,7 +377,7 @@
          001
         </td>
         <td>
-         John Doe
+         Rido Anugrah
         </td>
         <td>
          2023-10-01
@@ -517,7 +548,7 @@
          001
         </td>
         <td>
-         John Doe
+         Rido Anugrah
         </td>
         <td>
          Oktober
@@ -621,6 +652,70 @@
      </table>
     </div>
    </div>
+
+   <!-- Tambahkan ini sebelum div id="pengaturan" -->
+<div class="content-section" id="penggajian">
+    <div class="table-container">
+        <h2>Data Penggajian Karyawan</h2>
+        <a class="btn" href="#" id="tambahGaji">
+            Tambah Data Gaji
+        </a>
+        <table>
+            <thead>
+                <tr>
+                    <th>No</th>
+                    <th>ID Karyawan</th>
+                    <th>Nama</th>
+                    <th>Gaji Pokok</th>
+                    <th>Tunjangan</th>
+                    <th>Lembur</th>
+                    <th>Potongan</th>
+                    <th>Total Gaji</th>
+                    <th>Periode</th>
+                    <th>Status</th>
+                    <th>Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>1</td>
+                    <td>001</td>
+                    <td>Rido Anugrah</td>
+                    <td>Rp 15.000.000</td>
+                    <td>Rp 10.000.000</td>
+                    <td>Rp 500.000</td>
+                    <td>Rp 200.000</td>
+                    <td>Rp 6.300.000</td>
+                    <td>Oktober 2023</td>
+                    <td><span class="badge success">Dibayar</span></td>
+                    <td>
+                        <a href="#" class="action-btn edit"><i class="fas fa-edit"></i></a>
+                        <a href="#" class="action-btn print"><i class="fas fa-print"></i></a>
+                        <a href="#" class="action-btn delete"><i class="fas fa-trash"></i></a>
+                    </td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>002</td>
+                    <td>Jane Smith</td>
+                    <td>Rp 4.500.000</td>
+                    <td>Rp 800.000</td>
+                    <td>Rp 300.000</td>
+                    <td>Rp 150.000</td>
+                    <td>Rp 5.450.000</td>
+                    <td>Oktober 2023</td>
+                    <td><span class="badge pending">Pending</span></td>
+                    <td>
+                        <a href="#" class="action-btn edit"><i class="fas fa-edit"></i></a>
+                        <a href="#" class="action-btn print"><i class="fas fa-print"></i></a>
+                        <a href="#" class="action-btn delete"><i class="fas fa-trash"></i></a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
    <div id="pengaturan" class="content-section">
     <div class="settings-container">
         <h2>Pengaturan</h2>
